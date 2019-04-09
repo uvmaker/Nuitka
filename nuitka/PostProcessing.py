@@ -24,9 +24,15 @@ import stat
 import sys
 
 from nuitka import Options
+from nuitka.codegen import ConstantCodes
 from nuitka.PythonVersions import python_version
 from nuitka.utils.Utils import isWin32Windows
-from nuitka.utils.WindowsResources import RT_MANIFEST, copyResourcesFromFileToFile
+from nuitka.utils.WindowsResources import (
+    RT_MANIFEST,
+    RT_RCDATA,
+    addResourceToFile,
+    copyResourcesFromFileToFile,
+)
 
 
 def executePostProcessing(result_filename):
@@ -37,6 +43,10 @@ def executePostProcessing(result_filename):
     if python_version < 300:
         if isWin32Windows() and not Options.shallMakeModule():
             copyResourcesFromFileToFile(sys.executable, result_filename, RT_MANIFEST)
+
+            addResourceToFile(
+                result_filename, ConstantCodes.stream_data.getBytes(), RT_RCDATA, 3
+            )
 
     # Modules should not be executable, but Scons creates them like it, fix
     # it up here.

@@ -32,6 +32,9 @@ multiple resources proved to be not possible.
 # SxS manifest files resource kind
 RT_MANIFEST = 24
 
+# Data resource kind
+RT_RCDATA = 10
+
 
 def getResourcesFromDLL(filename, resource_kind, with_data=False):
     """ Get the resources of a specific kind from a Windows DLL.
@@ -161,3 +164,18 @@ def copyResourcesFromFileToFile(source_filename, target_filename, resource_kind)
                 raise ctypes.WinError()
 
         _closeFileWindowsResources(update_handle)
+
+
+def addResourceToFile(target_filename, data, resource_kind, res_name):
+    import ctypes
+
+    update_handle = _openFileWindowsResources(target_filename)
+
+    ret = ctypes.windll.kernel32.UpdateResourceA(  # @UndefinedVariable
+        update_handle, resource_kind, res_name, 0, data, len(data)
+    )
+
+    if not ret:
+        raise ctypes.WinError()
+
+    _closeFileWindowsResources(update_handle)
