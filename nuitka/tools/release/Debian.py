@@ -71,7 +71,7 @@ def updateDebianChangelog(old_version, new_version, distribution):
             os.system('debchange -R "New upstream hotfix release."')
 
     _bumpVersion(debian_version)
-    assert 0 == os.system('debchange -r "" --distribution "%s"' % distribution)
+    assert os.system('debchange -r "" --distribution "%s"' % distribution) == 0
 
 
 def checkChangeLog(message):
